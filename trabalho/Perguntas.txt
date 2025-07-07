@@ -1,0 +1,9 @@
+Qual a capital do Brasil?;Brasília;Rio de Janeiro;São Paulo;Salvador;A
+ 
+Quem descobriu o Brasil?;Vasco da Gama;Cristóvão Colombo;Pedro Álvares Cabral;Ronaldinho;C
+
+Qual a capital de Sergipe?;Aracaju;Estancia;Itabaiana;Lagarto;A
+
+Qual destes planetas e conhecido como 'Planeta Vermelho'?;Venus;Marte;Jupiter;Saturno;B
+
+Em que ano o Brasil foi descoberto?;1500;1492;1522;1600;A
