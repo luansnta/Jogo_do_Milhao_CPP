@@ -47,13 +47,13 @@ vector<Questao> carregarPerguntas(const string& arquivo){
     return bancodequestoes;
 }
 
-void mostrarPergunta(const Questao& q){
-    cout << "Pergunta: \n" << q.pergunta << endl;
+bool JogarRodada(const Questao* q_ptr){
+    cout << "Pergunta: \n" << q_ptr -> pergunta << endl;
     cout << "Alternativas: \n" << endl;
 
     char letra = 'A';
-    for(size_t i = 0; i < q.alternativas.size(); i++){
-        cout << letra << ") " << q.alternativas[i] << endl;
+    for(size_t i = 0; i < q_ptr -> alternativas.size(); i++){
+        cout << letra << ") " << q_ptr -> alternativas[i] << endl;
         letra ++;
     }
 
@@ -63,23 +63,57 @@ void mostrarPergunta(const Questao& q){
     cout << "Voce respondeu: " << respostaJogador << endl;
     respostaJogador = toupper(respostaJogador);
 
-    if(respostaJogador == q.respostacerta){
-        cout << "Resposta Correta!" << endl;
+    if(respostaJogador == q_ptr -> respostacerta){
+        return true;
     }else{
-        cout << "Resposta errada!" << endl;
-        cout << "Resposta correta: " << q.respostacerta << endl;
+        cout << "Resposta correta: " << q_ptr -> respostacerta << endl;
+        return false;
     }
 }
 
+void exibirMensagem(string mensagem){
+    cout << "[MENSAGEM] " << mensagem << endl;
+}
+
+void exibirMensagem(bool acertou){
+    if(acertou){
+        cout << "\n[MENSAGEM] PARABÉNS!! VOCÊ PASSOU PARA A PRÓXIMA FASE!!" << endl;
+    }else{
+        cout << "\n[MENSAGEM] RESPOSTA ERRADA!! FIM DE JOGO!!" << endl;
+    }
+}
+
+void jogar(const vector<Questao>& bancodequestoes, int indiceAtual){
+
+    if(indiceAtual >= bancodequestoes.size()){
+        cout << "VOCÊ VENCEU!!!" << endl;
+        return;
+    }
+        bool acertou = JogarRodada(&bancodequestoes[indiceAtual]);
+
+        if(acertou){
+            exibirMensagem(true);
+            jogar(bancodequestoes, indiceAtual + 1);
+        }else{
+            exibirMensagem(false);
+        }   
+}
 int main(){
+
+    exibirMensagem("O JOGO DO MILHÃO COMEÇOU!!!");
 
     vector<Questao> bancodequestoes = carregarPerguntas("Perguntas.txt");
 
     if(!bancodequestoes.empty()){
-        mostrarPergunta(bancodequestoes[0]);
+
+        exibirMensagem("PERGUNTAS CARREGADAS...");
+        
+        jogar(bancodequestoes, 0);//CHAMADA QUE INICIA O JOGO DO INDICE 0
+        
     }else{
-        cout << "Nenhuma pergunta carregada no arquivo!" << endl;
-    }
-   
+         exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
+        }
+    
+    exibirMensagem("OBRIGADO POR JOGAR!!!");
     return 0;
 }
