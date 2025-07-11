@@ -105,8 +105,16 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
             //Exibe a pontuação garantida
             cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
 
+            char opcao;
+            cout << "VOCÊ QUER PARAR [P] OU CONTINUAR[C]?: " << endl;
+            cin >> opcao;
+            opcao = toupper(opcao);
+            if(opcao == 'P'){
+                return;
+            }else{
             jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio);
-            
+            }
+
         }else{
             exibirMensagem(false);
             pontuacao = 0;
