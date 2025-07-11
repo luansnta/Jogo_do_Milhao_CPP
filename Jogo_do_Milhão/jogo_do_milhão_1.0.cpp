@@ -97,10 +97,16 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
         bool acertou = JogarRodada(&bancodequestoes[indiceAtual]);
 
         if(acertou){
-            exibirMensagem(true);
-            cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
+            //Atualiza a pontuação com o prêmio da rodada
             pontuacao = premio[indiceAtual];
+            //Mensagem de acerto
+            exibirMensagem(true);
+            
+            //Exibe a pontuação garantida
+            cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
+
             jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio);
+            
         }else{
             exibirMensagem(false);
             pontuacao = 0;
@@ -127,7 +133,7 @@ int main(){
     }else{
          exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
         }
-    
+    exibirMensagem("SUA PONTUAÇÃO FINAL FOI: R$ " + to_string(pontuacaoFinal));
     exibirMensagem("OBRIGADO POR JOGAR!!!");
     return 0;
 }
