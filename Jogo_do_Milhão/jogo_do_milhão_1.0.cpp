@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <cctype> //usar o topper
+#include <windows.h> //Reconhcer caracteres especiais
 using namespace std;
 
 struct Questao{
@@ -99,6 +100,9 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual){
         }   
 }
 int main(){
+     //permite que o console exiba corretamente os caracteres especiais
+    SetConsoleOutputCP(65001);
+    SetConsoleCP(65001);
 
     exibirMensagem("O JOGO DO MILHÃO COMEÇOU!!!");
 
