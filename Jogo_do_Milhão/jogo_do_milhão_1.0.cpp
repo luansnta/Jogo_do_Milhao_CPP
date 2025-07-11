@@ -84,25 +84,35 @@ void exibirMensagem(bool acertou){
     }
 }
 
-void jogar(const vector<Questao>& bancodequestoes, int indiceAtual){
+void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuacao, const int premio[]){
 
     if(indiceAtual >= bancodequestoes.size()){
         cout << "VOCÊ VENCEU!!!" << endl;
+        pontuacao = premio[bancodequestoes.size() - 1];
         return;
     }
+
+        cout << "PERGUNTA: " <<  indiceAtual + 1 << "VALENDO R$ " << premio[indiceAtual] << endl;
+        
         bool acertou = JogarRodada(&bancodequestoes[indiceAtual]);
 
         if(acertou){
             exibirMensagem(true);
-            jogar(bancodequestoes, indiceAtual + 1);
+            cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
+            pontuacao = premio[indiceAtual];
+            jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio);
         }else{
             exibirMensagem(false);
+            pontuacao = 0;
         }   
 }
 int main(){
      //permite que o console exiba corretamente os caracteres especiais
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
+
+    const int premio[] = {1000, 5000, 20000, 100000, 1000000};
+    int pontuacaoFinal = 0;
 
     exibirMensagem("O JOGO DO MILHÃO COMEÇOU!!!");
 
@@ -112,7 +122,7 @@ int main(){
 
         exibirMensagem("PERGUNTAS CARREGADAS...");
         
-        jogar(bancodequestoes, 0);//CHAMADA QUE INICIA O JOGO DO INDICE 0
+        jogar(bancodequestoes, 0, pontuacaoFinal, premio);//CHAMADA QUE INICIA O JOGO DO INDICE 0
         
     }else{
          exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
