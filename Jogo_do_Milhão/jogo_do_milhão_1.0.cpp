@@ -13,6 +13,12 @@ struct Questao{
     char respostacerta;
 };
 
+enum eResultadodaRodada{
+    ACERTO,
+    ERRO,
+    PULO
+};
+
 vector<Questao> carregarPerguntas(const string& arquivo){
     vector<Questao> bancodequestoes;
     ifstream leitor(arquivo);
@@ -48,10 +54,11 @@ vector<Questao> carregarPerguntas(const string& arquivo){
     return bancodequestoes;
 }
 
-bool JogarRodada(const Questao* q_ptr){
-    cout << "Pergunta: \n" << q_ptr -> pergunta << endl;
-    cout << "Alternativas: \n" << endl;
-
+eResultadodaRodada JogarRodada(const Questao* q_ptr, int& pulosRestantes){
+    //Exibir a pergunta
+    cout << "PERGUNTA: \n" << q_ptr -> pergunta << endl;
+    cout << "ALTERNATIVAS: \n" << endl;
+    
     char letra = 'A';
     for(size_t i = 0; i < q_ptr -> alternativas.size(); i++){
         cout << letra << ") " << q_ptr -> alternativas[i] << endl;
@@ -59,17 +66,37 @@ bool JogarRodada(const Questao* q_ptr){
     }
 
     char respostaJogador;
-    cout << "Qual a alternativa correta?: " << endl;
+    while(true){
+    if(pulosRestantes > 0){
+    cout << "QUAL A ALTERNATIVA CORRETA? (OU [P] PARA PULAR): " << endl;
+    }else{
+        cout << "QUAL A ALTERNATIVA CORRETA?: " << endl;
+    }
     cin >> respostaJogador;
     cout << "Voce respondeu: " << respostaJogador << endl;
     respostaJogador = toupper(respostaJogador);
 
-    if(respostaJogador == q_ptr -> respostacerta){
-        return true;
-    }else{
-        cout << "Resposta correta: " << q_ptr -> respostacerta << endl;
-        return false;
+        if(respostaJogador == 'P'){
+            if(pulosRestantes > 0){
+                pulosRestantes --; //Diminui o valor original
+                return PULO; //Pula a questão, sai da função e do loop
+            }else{
+                cout << "PULO ESGOTADO!!" << endl;
+                //O loop continua até o jogador responder a questão
+            }
+        }else if(respostaJogador >= 'A' && respostaJogador <= 'D'){
+            break; //Sai do loop se a resposta for válida
+        }else{
+            cout << "RESPOSTA INVÁLIDA, TENTE NOVAMENTE!!!" << endl;
+        }
     }
+    if(respostaJogador == q_ptr -> respostacerta){
+         return ACERTO;
+    }else{
+         cout << "Resposta correta: " << q_ptr -> respostacerta << endl;
+         return ERRO;
+    }
+    
 }
 
 void exibirMensagem(string mensagem){
@@ -84,7 +111,7 @@ void exibirMensagem(bool acertou){
     }
 }
 
-void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuacao, const int premio[]){
+void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuacao, const int premio[], int& pulosRestantes){
 
     if(indiceAtual >= bancodequestoes.size()){
         cout << "VOCÊ VENCEU!!!" << endl;
@@ -94,39 +121,51 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
 
         cout << "PERGUNTA: " <<  indiceAtual + 1 << "VALENDO R$ " << premio[indiceAtual] << endl;
         
-        bool acertou = JogarRodada(&bancodequestoes[indiceAtual]);
+        eResultadodaRodada resultado = JogarRodada(&bancodequestoes[indiceAtual], pulosRestantes);
 
-        if(acertou){
-            //Atualiza a pontuação com o prêmio da rodada
-            pontuacao = premio[indiceAtual];
-            //Mensagem de acerto
-            exibirMensagem(true);
-            
-            //Exibe a pontuação garantida
-            cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
+        switch(resultado)
+        {
+            case ACERTO:
+                //Atualiza a pontuação com o prêmio da rodada
+                pontuacao = premio[indiceAtual];
+                //Mensagem de acerto
+                exibirMensagem(true);
+                //Exibe a pontuação garantida
+                cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
 
-            char opcao;
-            cout << "VOCÊ QUER PARAR [P] OU CONTINUAR[C]?: " << endl;
-            cin >> opcao;
-            opcao = toupper(opcao);
-            if(opcao == 'P'){
-                return;
-            }else{
-            jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio);
-            }
+                char opcao;
+                //Lógica de para ou continuar
+                cout << "VOCÊ QUER PARAR[P] OU CONTINUAR[C]?: " << endl;
+                cin >> opcao;
+                opcao = toupper(opcao);
+                if(opcao == 'P'){
+                    return;
+                }else{
+                    jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes);
+                }
+            break;
+        
+            case ERRO:
+                exibirMensagem(false);
+                pontuacao = 0;
+            break;// O jogo acaba
 
-        }else{
-            exibirMensagem(false);
-            pontuacao = 0;
-        }   
+            case PULO:
+                cout << "[AJUDA] VOCÊ PULOU A PERGUNTA!!!" << endl;
+                //Pula a pergunta sem alterar a pontuação e vai para a próxima (ou finaliza o jogo)
+                jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes);
+        }  
 }
+
+
 int main(){
-     //permite que o console exiba corretamente os caracteres especiais
+    //permite que o console exiba corretamente os caracteres especiais
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
 
     const int premio[] = {1000, 5000, 20000, 100000, 1000000};
-    int pontuacaoFinal = 0;
+    int pontuacaoFinal = 0; //Variável para gerenicar os pontos
+    int pulosRestantes = 1; //Variável para gerenciar os pulos
 
     exibirMensagem("O JOGO DO MILHÃO COMEÇOU!!!");
 
@@ -136,7 +175,7 @@ int main(){
 
         exibirMensagem("PERGUNTAS CARREGADAS...");
         
-        jogar(bancodequestoes, 0, pontuacaoFinal, premio);//CHAMADA QUE INICIA O JOGO DO INDICE 0
+        jogar(bancodequestoes, 0, pontuacaoFinal, premio, pulosRestantes);//CHAMADA QUE INICIA O JOGO DO INDICE 0
         
     }else{
          exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
