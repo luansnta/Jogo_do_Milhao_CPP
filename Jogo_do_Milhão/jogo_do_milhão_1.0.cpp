@@ -185,7 +185,13 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
         
             case ERRO:
                 exibirMensagem(false);
-                pontuacao = 0;
+                //verifica em qual etapa o jogador errou
+                if(indiceAtual >= 4){//Se o jogador errou na pergunta do milhão (indice 4)
+                    pontuacao = premio[3];//O jogador ganha o prêmio anterior (porto seguro)
+                }else{
+                    pontuacao = 0; //Se errou antes do porto seguro, o jogador perde tudo
+                }
+                
             break;// O jogo acaba
 
             case PULO:
