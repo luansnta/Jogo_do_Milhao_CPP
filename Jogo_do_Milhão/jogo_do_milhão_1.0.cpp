@@ -6,6 +6,7 @@
 #include <cctype> //usar o topper
 #include <windows.h> //Reconhcer caracteres especiais
 #include <random> //Usada pra gerar número aleatórios
+#include <cstdlib>//Usar a função system()
 
 using namespace std;
 
@@ -146,6 +147,9 @@ void exibirMensagem(bool acertou){
 }
 
 void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuacao, const int premio[], int& pulosRestantes,int& metadeRestantes){
+
+    //Função para a limpar a tela
+    system("cls");
 
     if(indiceAtual >= bancodequestoes.size()){
         cout << "VOCÊ VENCEU!!!" << endl;
