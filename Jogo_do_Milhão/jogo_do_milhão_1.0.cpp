@@ -202,17 +202,41 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
         }  
 }
 
+void salvarPontuacao(const string& nomeJogador,int pontuacao){
+
+    ofstream arquivo_pontuacao("Histórico_de_Pontuação.txt", ios::app);
+
+    if(!arquivo_pontuacao.is_open()){
+        cout << "[ERRO] NÃO FOI POSSÍVEL ABRIR O ARQUIVO!!!" << endl;
+    }else{
+        arquivo_pontuacao << nomeJogador << ";" << pontuacao << endl;
+        arquivo_pontuacao.close();
+
+        cout << "[MENSAGEM] PONTUAÇÃO SALVA COM SUCESSO!!!" << endl;
+    }
+}
 
 int main(){
     //permite que o console exiba corretamente os caracteres especiais
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
 
+    string nomeJogador;
+    cout << "BEM VINDO(A) AO JOGO DO MILHÃO!!! QUAL O SEU NOME?" << endl;
+    //getline permite nome com espaços
+    getline(cin,nomeJogador);
+
+
     const int premio[] = {1000, 5000, 20000, 100000, 1000000};
     int pontuacaoFinal = 0; //Variável para gerenicar os pontos
     int pulosRestantes = 1; //Variável para gerenciar os pulos
     int metadeRestantes = 1; //Variável para gerenciar cartas
-    exibirMensagem("O JOGO DO MILHÃO COMEÇOU!!!");
+    
+    system("cls");//Limpa a tela
+
+    cout << "O JOGO DO MILHÃO COMEÇOU, "+ nomeJogador + "!!!" << endl;
+
+    system("pause");
 
     vector<Questao> bancodequestoes = carregarPerguntas("Perguntas.txt");
 
@@ -225,7 +249,11 @@ int main(){
     }else{
          exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
         }
+
     exibirMensagem("SUA PONTUAÇÃO FINAL FOI: R$ " + to_string(pontuacaoFinal));
+
+    salvarPontuacao(nomeJogador,pontuacaoFinal);
+    
     exibirMensagem("OBRIGADO POR JOGAR!!!");
     return 0;
 }
