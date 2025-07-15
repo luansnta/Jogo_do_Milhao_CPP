@@ -5,7 +5,7 @@
 #include <sstream>
 #include <cctype> //usar o topper
 #include <windows.h> //Reconhcer caracteres especiais
-#include <random> //Usada pra gerar número aleatórios
+#include <random> //Usada pra gerar números aleatórios
 #include <cstdlib>//Usar a função system()
 
 using namespace std;
@@ -166,20 +166,31 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
             case ACERTO:
                 //Atualiza a pontuação com o prêmio da rodada
                 pontuacao = premio[indiceAtual];
-                //Mensagem de acerto
-                exibirMensagem(true);
+    
                 //Exibe a pontuação garantida
                 cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
 
-                char opcao;
-                //Lógica de para ou continuar
-                cout << "VOCÊ QUER PARAR[P] OU CONTINUAR[C]?: " << endl;
-                cin >> opcao;
-                opcao = toupper(opcao);
-                if(opcao == 'P'){
-                    return;
-                }else{
+                //Verifica se era a última pergunta da lista
+                if(indiceAtual == bancodequestoes.size() -1){
+                    /*Se era a última pergunta, chama a recursão mais um vez para que entre na condição de vitória 
+                    (indiceAtual >= bancodequestoes.size())*/
                     jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes, metadeRestantes);
+    
+                }else{
+                    //E não for a última pergunta, mostra a mensagem de próxima fase
+                    exibirMensagem(true);
+
+                    //Se não era a última pergunta, aparece a opção de parar ou continuar
+                    char opcao;
+                    //Lógica de parar ou continuar
+                    cout << "VOCÊ QUER PARAR[P] OU CONTINUAR[C]?: " << endl;
+                    cin >> opcao;
+                    opcao = toupper(opcao);
+                    if(opcao == 'P'){
+                        return;
+                    }else{
+                        jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes, metadeRestantes);
+                    }
                 }
             break;
         

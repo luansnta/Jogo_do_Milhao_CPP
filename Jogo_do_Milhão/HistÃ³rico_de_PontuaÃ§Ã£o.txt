@@ -1,1 +1,8 @@
 Luan;1000000
+Castro;1000000
+Marcus;1000000
+Teodoro;1000000
+Martino;1000000
+Luiz;1000000
+Camilo;0
+Denis;1000000
