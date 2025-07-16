@@ -157,7 +157,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
         return;
     }
 
-        cout << "PERGUNTA: " <<  indiceAtual + 1 << "VALENDO R$ " << premio[indiceAtual] << endl;
+        cout << "PERGUNTA " <<  indiceAtual + 1 << " VALENDO R$ " << premio[indiceAtual] << endl;
         
         eResultadodaRodada resultado = JogarRodada(&bancodequestoes[indiceAtual], pulosRestantes,metadeRestantes);
 
@@ -171,7 +171,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
                 cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
 
                 //Verifica se era a última pergunta da lista
-                if(indiceAtual == bancodequestoes.size() -1){
+                if(indiceAtual == bancodequestoes.size() - 1){
                     /*Se era a última pergunta, chama a recursão mais um vez para que entre na condição de vitória 
                     (indiceAtual >= bancodequestoes.size())*/
                     jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes, metadeRestantes);
@@ -266,5 +266,7 @@ int main(){
     salvarPontuacao(nomeJogador,pontuacaoFinal);
     
     exibirMensagem("OBRIGADO POR JOGAR!!!");
+
+    system("pause");
     return 0;
 }
