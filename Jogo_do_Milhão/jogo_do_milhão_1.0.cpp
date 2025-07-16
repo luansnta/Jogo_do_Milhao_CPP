@@ -227,46 +227,117 @@ void salvarPontuacao(const string& nomeJogador,int pontuacao){
     }
 }
 
+void exibirRegras(){
+
+    system("cls");
+    //Cria uma leitor para o arquivo "Regras.txt"
+    ifstream arquivo_regras("Regras.txt");
+    //Verificar se o arquivo abriu
+    if(!arquivo_regras.is_open()){
+        cout << "[ERRO] NÃO FOI POSSÍVEL ABRIR O ARQUIVO!!!" << endl;
+    }else{
+        string linha;
+        //Loop para ler todas as linhas do arquivo
+        while(getline(arquivo_regras, linha)){
+            //Exibe cada linha na tela
+            cout << linha << endl;
+        }
+        //Fecha o arquivo
+        arquivo_regras.close();
+    }
+
+    system("pause");
+
+}
+void menuPrincipal(){
+
+    system("cls");
+    cout << "========================================" << endl;
+    cout << "         JOGO DO MILHAO" << endl;
+    cout << "========================================" << endl;
+    cout << "\n   [1] INICIAR" << endl;
+    cout << "   [2] REGRAS DO JOGO" << endl;
+    cout << "   [3] SAIR" << endl; 
+    cout << "\nESCOLHA UMA OPÇÃO: " << endl;
+}
+
 int main(){
     //permite que o console exiba corretamente os caracteres especiais
     SetConsoleOutputCP(65001);
     SetConsoleCP(65001);
 
-    string nomeJogador;
-    cout << "BEM VINDO(A) AO JOGO DO MILHÃO!!! QUAL O SEU NOME?" << endl;
-    //getline permite nome com espaços
-    getline(cin,nomeJogador);
+    int op;
+    //Loop infinito para exibir o menu
+    while(true){
+        menuPrincipal();
+        cin >> op;
+
+        switch (op)
+        {
+        case 1:
+        {
+            string nomeJogador;
+            cout << "BEM VINDO(A) AO JOGO DO MILHÃO!!! QUAL O SEU NOME?" << endl;
+            //getline permite nome com espaços
+            getline(cin,nomeJogador);
 
 
-    const int premio[] = {1000, 5000, 20000, 100000, 1000000};
-    int pontuacaoFinal = 0; //Variável para gerenicar os pontos
-    int pulosRestantes = 1; //Variável para gerenciar os pulos
-    int metadeRestantes = 1; //Variável para gerenciar cartas
+            const int premio[] = {1000, 5000, 20000, 100000, 1000000};
+            int pontuacaoFinal = 0; //Variável para gerenicar os pontos
+            int pulosRestantes = 1; //Variável para gerenciar os pulos
+            int metadeRestantes = 1; //Variável para gerenciar cartas
     
-    system("cls");//Limpa a tela
+            system("cls");//Limpa a tela
 
-    cout << "O JOGO DO MILHÃO COMEÇOU, "+ nomeJogador + "!!!" << endl;
+            cout << "O JOGO DO MILHÃO COMEÇOU, "+ nomeJogador + "!!!" << endl;
 
-    system("pause");
+            system("pause");
 
-    vector<Questao> bancodequestoes = carregarPerguntas("Perguntas.txt");
+            vector<Questao> bancodequestoes = carregarPerguntas("Perguntas.txt");
 
-    if(!bancodequestoes.empty()){
+            if(!bancodequestoes.empty()){
 
-        exibirMensagem("PERGUNTAS CARREGADAS...");
+                exibirMensagem("PERGUNTAS CARREGADAS...");
         
-        jogar(bancodequestoes, 0, pontuacaoFinal, premio, pulosRestantes,metadeRestantes);//CHAMADA QUE INICIA O JOGO DO INDICE 0
+                jogar(bancodequestoes, 0, pontuacaoFinal, premio, pulosRestantes,metadeRestantes);//CHAMADA QUE INICIA O JOGO DO INDICE 0
         
-    }else{
-         exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
+            }else{
+                exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
+            }
+
+            exibirMensagem("SUA PONTUAÇÃO FINAL FOI: R$ " + to_string(pontuacaoFinal));
+
+            salvarPontuacao(nomeJogador,pontuacaoFinal);
+    
+            exibirMensagem("OBRIGADO POR JOGAR!!!");
+
+            system("pause");
+
+            break;
         }
+        case 2:
 
-    exibirMensagem("SUA PONTUAÇÃO FINAL FOI: R$ " + to_string(pontuacaoFinal));
+            exibirRegras();
 
-    salvarPontuacao(nomeJogador,pontuacaoFinal);
+            break;
+            
+        case 3:
+            
+            exibirMensagem("OBRIGADO POR JOGAR!!!");
+
+            system("pause");
+
+            return 0;
+
+            break;
+
+        default:
+            
+            cout << "OPÇÃO INVÁLIDA!!! TENTE NOVAMENTE..." << endl;
+
+            break;
+        }
+    }
     
-    exibirMensagem("OBRIGADO POR JOGAR!!!");
-
-    system("pause");
     return 0;
 }
