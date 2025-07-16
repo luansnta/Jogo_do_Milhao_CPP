@@ -7,18 +7,19 @@
 #include <windows.h> //Reconhcer caracteres especiais
 #include <random> //Usada pra gerar números aleatórios
 #include <cstdlib>//Usar a função system()
+#include <limits>// Usar a função cin.ignore()
 
 using namespace std;
 
 struct Questao{
     string pergunta;
-    vector<string> alternativas; 
+    vector<string> alternativas;
     char respostacerta;
 };
 
 enum eResultadodaRodada{
     ACERTO, ERRO, PULO
-    
+
 };
 
 vector<Questao> carregarPerguntas(const string& arquivo){
@@ -33,7 +34,7 @@ vector<Questao> carregarPerguntas(const string& arquivo){
     string linha;
 
     while(getline(leitor,linha)){
-        stringstream ss(linha); 
+        stringstream ss(linha);
         string pedaco_questao;
         Questao questao_temp;
 
@@ -45,13 +46,13 @@ vector<Questao> carregarPerguntas(const string& arquivo){
             getline(ss,pedaco_questao,';');
             questao_temp.alternativas.push_back(pedaco_questao);
         }
-        
+
         getline(ss, pedaco_questao, ';');//Lê as respostas
         questao_temp.respostacerta = pedaco_questao[0];
 
         bancodequestoes.push_back(questao_temp);
     }
-    leitor.close(); 
+    leitor.close();
 
     return bancodequestoes;
 }
@@ -60,7 +61,7 @@ eResultadodaRodada JogarRodada(const Questao* q_ptr, int& pulosRestantes, int& m
     //Exibir a pergunta
     cout << "PERGUNTA: \n" << q_ptr -> pergunta << endl;
     cout << "ALTERNATIVAS: \n" << endl;
-    
+
     char letra = 'A';
     for(size_t i = 0; i < q_ptr -> alternativas.size(); i++){
         cout << letra << ") " << q_ptr -> alternativas[i] << endl;
@@ -102,14 +103,14 @@ eResultadodaRodada JogarRodada(const Questao* q_ptr, int& pulosRestantes, int& m
                         char letra = 'A' + i;
                         cout << letra << ")" << q_ptr->alternativas[i] << endl;
                     }
-                }    
+                }
 
                 continue; //Volta ao início do loop para pedir uma nova resposta do jogador
 
             }else{
                 cout << "AJUDA ESGOSTADA!!!" << endl;
             }
-        
+
         }else if(respostaJogador == 'P'){
             if(pulosRestantes > 0){
                 pulosRestantes --; //Diminui o valor original
@@ -131,7 +132,7 @@ eResultadodaRodada JogarRodada(const Questao* q_ptr, int& pulosRestantes, int& m
          cout << "RESPOSTA CORRETA: " << q_ptr -> respostacerta << endl;
          return ERRO;
     }
-    
+
 }
 
 void exibirMensagem(string mensagem){
@@ -158,7 +159,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
     }
 
         cout << "PERGUNTA " <<  indiceAtual + 1 << " VALENDO R$ " << premio[indiceAtual] << endl;
-        
+
         eResultadodaRodada resultado = JogarRodada(&bancodequestoes[indiceAtual], pulosRestantes,metadeRestantes);
 
         switch(resultado)
@@ -166,16 +167,16 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
             case ACERTO:
                 //Atualiza a pontuação com o prêmio da rodada
                 pontuacao = premio[indiceAtual];
-    
+
                 //Exibe a pontuação garantida
                 cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
 
                 //Verifica se era a última pergunta da lista
                 if(indiceAtual == bancodequestoes.size() - 1){
-                    /*Se era a última pergunta, chama a recursão mais um vez para que entre na condição de vitória 
+                    /*Se era a última pergunta, chama a recursão mais um vez para que entre na condição de vitória
                     (indiceAtual >= bancodequestoes.size())*/
                     jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes, metadeRestantes);
-    
+
                 }else{
                     //E não for a última pergunta, mostra a mensagem de próxima fase
                     exibirMensagem(true);
@@ -193,7 +194,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
                     }
                 }
             break;
-        
+
             case ERRO:
                 exibirMensagem(false);
                 //verifica em qual etapa o jogador errou
@@ -202,7 +203,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
                 }else{
                     pontuacao = 0; //Se errou antes do porto seguro, o jogador perde tudo
                 }
-                
+
             break;// O jogo acaba
 
             case PULO:
@@ -210,7 +211,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
                 //Pula a pergunta sem alterar a pontuação e vai para a próxima (ou finaliza o jogo)
                 jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes,metadeRestantes);
 
-        }  
+        }
 }
 
 void salvarPontuacao(const string& nomeJogador,int pontuacao){
@@ -257,7 +258,7 @@ void menuPrincipal(){
     cout << "========================================" << endl;
     cout << "\n   [1] INICIAR" << endl;
     cout << "   [2] REGRAS DO JOGO" << endl;
-    cout << "   [3] SAIR" << endl; 
+    cout << "   [3] SAIR" << endl;
     cout << "\nESCOLHA UMA OPÇÃO: " << endl;
 }
 
@@ -272,72 +273,74 @@ int main(){
         menuPrincipal();
         cin >> op;
 
-        switch (op)
-        {
-        case 1:
-        {
-            string nomeJogador;
-            cout << "BEM VINDO(A) AO JOGO DO MILHÃO!!! QUAL O SEU NOME?" << endl;
-            //getline permite nome com espaços
-            getline(cin,nomeJogador);
+        switch (op){
+            case 1:
+            {
+                //Limpa o buffer de entrada para remover o "\n" deixado pelo cin >> op;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                
+                string nomeJogador;
+                cout << "BEM VINDO(A) AO JOGO DO MILHÃO!!! QUAL O SEU NOME?" << endl;
+                //getline permite nome com espaços
+                getline(cin,nomeJogador);
 
 
-            const int premio[] = {1000, 5000, 20000, 100000, 1000000};
-            int pontuacaoFinal = 0; //Variável para gerenicar os pontos
-            int pulosRestantes = 1; //Variável para gerenciar os pulos
-            int metadeRestantes = 1; //Variável para gerenciar cartas
-    
-            system("cls");//Limpa a tela
+                const int premio[] = {1000, 5000, 20000, 100000, 1000000};
+                int pontuacaoFinal = 0; //Variável para gerenicar os pontos
+                int pulosRestantes = 1; //Variável para gerenciar os pulos
+                int metadeRestantes = 1; //Variável para gerenciar cartas
 
-            cout << "O JOGO DO MILHÃO COMEÇOU, "+ nomeJogador + "!!!" << endl;
+                system("cls");//Limpa a tela
 
-            system("pause");
+                cout << "O JOGO DO MILHÃO COMEÇOU, "+ nomeJogador + "!!!" << endl;
 
-            vector<Questao> bancodequestoes = carregarPerguntas("Perguntas.txt");
+                system("pause");
 
-            if(!bancodequestoes.empty()){
+                vector<Questao> bancodequestoes = carregarPerguntas("Perguntas.txt");
 
-                exibirMensagem("PERGUNTAS CARREGADAS...");
-        
-                jogar(bancodequestoes, 0, pontuacaoFinal, premio, pulosRestantes,metadeRestantes);//CHAMADA QUE INICIA O JOGO DO INDICE 0
-        
-            }else{
-                exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
+                if(!bancodequestoes.empty()){
+
+                    exibirMensagem("PERGUNTAS CARREGADAS...");
+
+                    jogar(bancodequestoes, 0, pontuacaoFinal, premio, pulosRestantes,metadeRestantes);//CHAMADA QUE INICIA O JOGO DO INDICE 0
+
+                }else{
+                    exibirMensagem("\nNENHUMA PERGUNTA CARREGADA!!!");
+                }
+
+                exibirMensagem("SUA PONTUAÇÃO FINAL FOI: R$ " + to_string(pontuacaoFinal));
+
+                salvarPontuacao(nomeJogador,pontuacaoFinal);
+
+                exibirMensagem("OBRIGADO POR JOGAR!!!");
+
+                system("pause");
+
+            break;
             }
+            case 2:
 
-            exibirMensagem("SUA PONTUAÇÃO FINAL FOI: R$ " + to_string(pontuacaoFinal));
-
-            salvarPontuacao(nomeJogador,pontuacaoFinal);
-    
-            exibirMensagem("OBRIGADO POR JOGAR!!!");
-
-            system("pause");
-
-            break;
-        }
-        case 2:
-
-            exibirRegras();
-
-            break;
-            
-        case 3:
-            
-            exibirMensagem("OBRIGADO POR JOGAR!!!");
-
-            system("pause");
-
-            return 0;
+                exibirRegras();
 
             break;
 
-        default:
-            
-            cout << "OPÇÃO INVÁLIDA!!! TENTE NOVAMENTE..." << endl;
+            case 3:
+
+                exibirMensagem("OBRIGADO POR JOGAR!!!");
+
+                system("pause");
+
+                return 0;
+
+            break;
+
+            default:
+
+                cout << "OPÇÃO INVÁLIDA!!! TENTE NOVAMENTE..." << endl;
 
             break;
         }
     }
-    
+
     return 0;
 }
