@@ -2,13 +2,13 @@
    REGRAS DO JOGO DO MILHAO
 ================================
 
-1. Você respondera a uma serie de perguntas com dificuldade crescente.
+1. Você respondera a uma série de perguntas com dificuldade crescente.
 
-2. Cada pergunta tem 4 alternativas, e apenas uma esta correta.
+2. Cada pergunta tem 4 alternativas, e apenas uma está correta.
 
 3. A cada acerto, você acumula um premio e pode escolher parar [P] ou continuar [C].
 
-4. Se errar, sua pontuação volta para o ultimo "Porto Seguro" alcançado.
+4. Se errar, sua pontuação volta para último "Porto Seguro" alcançado.
    (No nosso jogo, o único porto seguro está na pergunta de R$ 100.000).
 
 5. Você tem duas ajudas, que podem ser usadas apenas uma vez cada:

@@ -8,6 +8,7 @@
 #include <random> //Usada pra gerar números aleatórios
 #include <cstdlib>//Usar a função system()
 #include <limits>// Usar a função cin.ignore()
+#include <algorithm>//Usar o sort
 
 using namespace std;
 
@@ -20,6 +21,11 @@ struct Questao{
 enum eResultadodaRodada{
     ACERTO, ERRO, PULO
 
+};
+
+struct PontuacaoJogador{
+    string nome;
+    int pontos;
 };
 
 vector<Questao> carregarPerguntas(const string& arquivo){
@@ -141,9 +147,9 @@ void exibirMensagem(string mensagem){
 
 void exibirMensagem(bool acertou){
     if(acertou){
-        cout << "\n[MENSAGEM] PARABÉNS!! VOCÊ PASSOU PARA A PRÓXIMA FASE!!" << endl;
+        cout << "\n[MENSAGEM] PARABÉNS!! VOCÊ PASSOU PARA A PRÓXIMA FASE!!\n" << endl;
     }else{
-        cout << "\n[MENSAGEM] RESPOSTA ERRADA!! FIM DE JOGO!!" << endl;
+        cout << "\n[MENSAGEM] RESPOSTA ERRADA!! FIM DE JOGO!!\n" << endl;
     }
 }
 
@@ -153,7 +159,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
     system("cls");
 
     if(indiceAtual >= bancodequestoes.size()){
-        cout << "VOCÊ VENCEU!!!" << endl;
+        cout << "[MENSAGEM] PARABÉNS VOCÊ VENCEU!!!\n" << endl;
         pontuacao = premio[bancodequestoes.size() - 1];
         return;
     }
@@ -169,7 +175,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
                 pontuacao = premio[indiceAtual];
 
                 //Exibe a pontuação garantida
-                cout << "VOCE GARANTIU: R$ " << pontuacao << endl;
+                cout << "\nVOCE GARANTIU: R$ " << pontuacao << endl;
 
                 //Verifica se era a última pergunta da lista
                 if(indiceAtual == bancodequestoes.size() - 1){
@@ -207,7 +213,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
             break;// O jogo acaba
 
             case PULO:
-                cout << "[AJUDA] VOCÊ PULOU A PERGUNTA!!!" << endl;
+                cout << "\n[AJUDA] VOCÊ PULOU A PERGUNTA!!!" << endl;
                 //Pula a pergunta sem alterar a pontuação e vai para a próxima (ou finaliza o jogo)
                 jogar(bancodequestoes, indiceAtual + 1, pontuacao, premio, pulosRestantes,metadeRestantes);
 
@@ -224,8 +230,63 @@ void salvarPontuacao(const string& nomeJogador,int pontuacao){
         arquivo_pontuacao << nomeJogador << ";" << pontuacao << endl;
         arquivo_pontuacao.close();
 
-        cout << "[MENSAGEM] PONTUAÇÃO SALVA COM SUCESSO!!!" << endl;
+        cout << "\n[MENSAGEM] PONTUAÇÃO SALVA COM SUCESSO!!!" << endl;
     }
+}
+
+void exibirPontuacao(){
+
+    system("cls");
+    ifstream arquivo_pontos("Histórico_de_Pontuação.txt");
+
+    if(!arquivo_pontos.is_open()){
+        
+        cout << "[ERRO] NÃO FOI POSSÍVEL ABRIR O ARQUIVO!!!" << endl;
+
+        system("pause");
+        return;
+    }
+
+    const int pontuacao_MAX = 100; // Limite máximo definido
+    PontuacaoJogador* pontuacoes = new PontuacaoJogador[pontuacao_MAX];//Aloca a memória para 100
+    int contadorPontuacoes = 0;//Declaração do contador manual
+
+    string linha;
+
+    //Lê o arquivo e preenche o array alocado
+    while(getline(arquivo_pontos, linha, ';') && contadorPontuacoes < pontuacao_MAX){
+        stringstream ss;
+        string nome, pontos_str;
+
+        if(getline(ss, nome, ';') && getline(ss, pontos_str)){
+            //Acessa o array usando ponteiros 
+            pontuacoes[contadorPontuacoes].nome = nome;
+            pontuacoes[contadorPontuacoes].pontos = stoi(pontos_str);
+            contadorPontuacoes ++;
+        }
+    }
+
+    arquivo_pontos.close();
+    //Ordena o array usando o sort que funciona como um ponteiro para o início e o fim dos dados
+    sort(pontuacoes, pontuacoes + contadorPontuacoes, [](const PontuacaoJogador& a, const PontuacaoJogador& b){
+        return a.pontos > b.pontos;
+    });
+    //Exibe a tabela de pontos
+    cout << "========================================" << endl;
+    cout << "           TABELA DE PONTOS" << endl;
+    cout << "========================================" << endl;
+
+    if(contadorPontuacoes == 0){
+        cout << "\nNÃO HÁ PONTOS REGISTRADOS!!!" << endl;
+    }else{
+        for(int i = 0; i < contadorPontuacoes; ++i){
+            cout << i + 1 << ". " << pontuacoes[i].nome << " - R$ " << pontuacoes[i].pontos << endl;
+        }
+    }
+
+    delete[] pontuacoes;//Libera memória devolvendo o bloco pedido com new[]
+
+    system("pause");
 }
 
 void exibirRegras(){
@@ -250,15 +311,17 @@ void exibirRegras(){
     system("pause");
 
 }
+
 void menuPrincipal(){
 
     system("cls");
     cout << "========================================" << endl;
     cout << "         JOGO DO MILHAO" << endl;
     cout << "========================================" << endl;
-    cout << "\n   [1] INICIAR" << endl;
+    cout << "\n    [1] INICIAR" << endl;
     cout << "   [2] REGRAS DO JOGO" << endl;
-    cout << "   [3] SAIR" << endl;
+    cout << "   [3] HISTÓRICO DE PONTUAÇÕES" << endl;
+    cout << "   [4] SAIR" << endl;
     cout << "\nESCOLHA UMA OPÇÃO: " << endl;
 }
 
@@ -278,7 +341,7 @@ int main(){
             {
                 //Limpa o buffer de entrada para remover o "\n" deixado pelo cin >> op;
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                
+
                 string nomeJogador;
                 cout << "BEM VINDO(A) AO JOGO DO MILHÃO!!! QUAL O SEU NOME?" << endl;
                 //getline permite nome com espaços
@@ -312,7 +375,7 @@ int main(){
 
                 salvarPontuacao(nomeJogador,pontuacaoFinal);
 
-                exibirMensagem("OBRIGADO POR JOGAR!!!");
+                cout << "[MENSAGEM] OBRIGADO POR JOGAR!!!" << endl;
 
                 system("pause");
 
@@ -326,7 +389,13 @@ int main(){
 
             case 3:
 
-                exibirMensagem("OBRIGADO POR JOGAR!!!");
+                exibirPontuacao();
+
+                
+            break;
+            case 4:
+
+                cout << "[MENSAGEM] OBRIGADO POR JOGAR!!!" << endl;
 
                 system("pause");
 

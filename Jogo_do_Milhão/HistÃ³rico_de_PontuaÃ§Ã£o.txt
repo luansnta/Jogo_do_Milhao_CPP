@@ -16,3 +16,8 @@ e;1000000
 f;100000
 Tico;0
 Teste 2;100000
+Linux;0
+Lucio;0
+valck;0
+Teste 3;1000000
+Marcus;100000
