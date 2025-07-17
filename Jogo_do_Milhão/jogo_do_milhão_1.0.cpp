@@ -1,14 +1,14 @@
 #include <iostream>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <sstream>
+#include <string>//Permite manipular strings
+#include <vector>//Permite usar um array de tamanho dinâmico
+#include <fstream>//Manipular arquivos
+#include <sstream>//Permite manipular a função getline separando as linhas através do ";"
 #include <cctype> //usar o topper
 #include <windows.h> //Reconhcer caracteres especiais
 #include <random> //Usada pra gerar números aleatórios
 #include <cstdlib>//Usar a função system()
 #include <limits>// Usar a função cin.ignore()
-#include <algorithm>//Usar o sort
+
 
 using namespace std;
 
@@ -21,11 +21,6 @@ struct Questao{
 enum eResultadodaRodada{
     ACERTO, ERRO, PULO
 
-};
-
-struct PontuacaoJogador{
-    string nome;
-    int pontos;
 };
 
 vector<Questao> carregarPerguntas(const string& arquivo){
@@ -222,7 +217,7 @@ void jogar(const vector<Questao>& bancodequestoes, int indiceAtual, int& pontuac
 
 void salvarPontuacao(const string& nomeJogador,int pontuacao){
 
-    ofstream arquivo_pontuacao("Histórico_de_Pontuação.txt", ios::app);
+    ofstream arquivo_pontuacao("Historico_de_Pontuacao.txt", ios::app);
 
     if(!arquivo_pontuacao.is_open()){
         cout << "[ERRO] NÃO FOI POSSÍVEL ABRIR O ARQUIVO!!!" << endl;
@@ -237,55 +232,44 @@ void salvarPontuacao(const string& nomeJogador,int pontuacao){
 void exibirPontuacao(){
 
     system("cls");
-    ifstream arquivo_pontos("Histórico_de_Pontuação.txt");
+
+    //Exibe a tabela de pontos
+        cout << "========================================" << endl;
+        cout << "           HISTÓRICO DE PONTOS" << endl;
+        cout << "========================================" << endl;
+
+    ifstream arquivo_pontos("Historico_de_Pontuacao.txt");
 
     if(!arquivo_pontos.is_open()){
-        
+
         cout << "[ERRO] NÃO FOI POSSÍVEL ABRIR O ARQUIVO!!!" << endl;
 
         system("pause");
         return;
-    }
-
-    const int pontuacao_MAX = 100; // Limite máximo definido
-    PontuacaoJogador* pontuacoes = new PontuacaoJogador[pontuacao_MAX];//Aloca a memória para 100
-    int contadorPontuacoes = 0;//Declaração do contador manual
-
-    string linha;
-
-    //Lê o arquivo e preenche o array alocado
-    while(getline(arquivo_pontos, linha, ';') && contadorPontuacoes < pontuacao_MAX){
-        stringstream ss;
-        string nome, pontos_str;
-
-        if(getline(ss, nome, ';') && getline(ss, pontos_str)){
-            //Acessa o array usando ponteiros 
-            pontuacoes[contadorPontuacoes].nome = nome;
-            pontuacoes[contadorPontuacoes].pontos = stoi(pontos_str);
-            contadorPontuacoes ++;
-        }
-    }
-
-    arquivo_pontos.close();
-    //Ordena o array usando o sort que funciona como um ponteiro para o início e o fim dos dados
-    sort(pontuacoes, pontuacoes + contadorPontuacoes, [](const PontuacaoJogador& a, const PontuacaoJogador& b){
-        return a.pontos > b.pontos;
-    });
-    //Exibe a tabela de pontos
-    cout << "========================================" << endl;
-    cout << "           TABELA DE PONTOS" << endl;
-    cout << "========================================" << endl;
-
-    if(contadorPontuacoes == 0){
-        cout << "\nNÃO HÁ PONTOS REGISTRADOS!!!" << endl;
     }else{
-        for(int i = 0; i < contadorPontuacoes; ++i){
-            cout << i + 1 << ". " << pontuacoes[i].nome << " - R$ " << pontuacoes[i].pontos << endl;
+
+        string linha;
+        bool verificarLinhas;
+
+        //Loop para ler o arquivo linha por linha
+        while(getline(arquivo_pontos, linha)){
+            verificarLinhas = true; //Afirma que encontrou pelo menos uma linha
+            stringstream ss(linha);
+            string nome, pontos;
+
+            //A linha é fatiada usando o ; como delimitador
+            if(getline(ss, nome, ';') && getline(ss, pontos)){
+            //Acessa o array usando ponteiros
+            cout <<"\nJOGADOR(A): " << nome << " - PRÊMIO: R$ " << pontos << endl;
+            }
+        }
+
+        arquivo_pontos.close();
+
+        if(!verificarLinhas){
+            cout << "\nNÃO HÁ PONTOS REGISTRADOS!!!" << endl;
         }
     }
-
-    delete[] pontuacoes;//Libera memória devolvendo o bloco pedido com new[]
-
     system("pause");
 }
 
@@ -318,7 +302,7 @@ void menuPrincipal(){
     cout << "========================================" << endl;
     cout << "         JOGO DO MILHAO" << endl;
     cout << "========================================" << endl;
-    cout << "\n    [1] INICIAR" << endl;
+    cout << "\n   [1] INICIAR" << endl;
     cout << "   [2] REGRAS DO JOGO" << endl;
     cout << "   [3] HISTÓRICO DE PONTUAÇÕES" << endl;
     cout << "   [4] SAIR" << endl;
@@ -391,7 +375,7 @@ int main(){
 
                 exibirPontuacao();
 
-                
+
             break;
             case 4:
 
